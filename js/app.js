@@ -18,6 +18,8 @@ class Character {
     }
 
     render() {
+        let ctx = document.getElementById('gameCanvas').getContext('2d');
+
         ctx.drawImage(Resources.get(this.sprite), this._x, this._y);
     }
 }
@@ -45,11 +47,26 @@ class Enemy extends Character {
 // This class requires an update(), render() and
 // a handleInput() method.
 class Player extends Character {
-    constructor() {
-        super('images/char-boy.png', BOUNDARIES.left, BOUNDARIES.down);
+    constructor(character) {
+        super(`images/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
+
+        this._name = CHARACTERS[character].name;
+
+        this._methods = {
+            "onKeyPressed": this._onKeyPressed.bind(this)
+        }
+        // This listens for key presses and sends the keys to your
+        // Player.handleInput() method. You don't need to modify this.
+        document.addEventListener("keyup", this._methods.onKeyPressed);
+
+        this._waterReached = false;
     }
 
-    handleInput(move) {
+    _onKeyPressed(event) {
+        this._handleInput(ALLOWED_KEYS[event.keyCode]);
+    }
+
+    _handleInput(move) {
         switch (move) {
             case "left":
                 this._x -= 100;
@@ -60,7 +77,8 @@ class Player extends Character {
             case "up":
                 this._y -= 80;
                 if (this._y < BOUNDARIES["up"]) {
-                    setTimeout(levelCompleted.bind(this), 100);
+                    this._waterReached = true;
+                    document.removeEventListener("keyup", this._methods.onKeyPressed);
                 }
                 break;
             case "right":
@@ -78,7 +96,7 @@ class Player extends Character {
         }
     }
 
-    crash() {
+    onLadybirdTouch() {
         console.info("AUCH");
 
         // animate crash
@@ -87,24 +105,12 @@ class Player extends Character {
         this._x = BOUNDARIES.left;
         this._y = BOUNDARIES.down;
     }
+
+    hasReachedWater() {
+        return this._waterReached;
+    }
+
+    getName() {
+        return this._name;
+    }
 }
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-let allEnemies = [...new Array(5)].map(() => new Enemy());
-let player = new Player();
-
-const onKeyPressed = function(e) {
-    player.handleInput(ALLOWED_KEYS[e.keyCode]);
-};
-
-const levelCompleted = function() {
-    alert("WELL DONE!")
-
-    document.removeEventListener("keyup", onKeyPressed);
-}
-
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener("keyup", onKeyPressed);

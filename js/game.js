@@ -1,176 +1,183 @@
 class ArcadeGame {
-    constructor() {
+    constructor(level, playerCharacter) {
+        this._startTime = new Date();
+        this._stopTime = null;
         this._lastTime = null;
-        this._selectedCharacter = null;
+        this._selectedLevel = level;
+        this._selectedCharacter = playerCharacter;
         this._assetsReady = false;
-
-        this._initHomeScreen();
-    }
-
-    _initHomeScreen() {
-        // load game levels
-        for (let key in GAME_LEVELS) {
-            let value = GAME_LEVELS[key];
-            let frontFace = document.createElement("div");
-            let backFace = document.createElement("div");
-            let button = document.createElement("button");
-
-            frontFace.classList.add("flip-face", "flip-face-front");
-            backFace.classList.add("flip-face", "flip-face-back");
-            button.classList.add("btn-level", "flip", "flip-vertical");
-
-            frontFace.innerText = `x${ENEMIES[key]}`;
-            backFace.innerText = value;
-
-            button.setAttribute("data-level", key);
-
-            button.appendChild(frontFace);
-            button.appendChild(backFace);
-
-            if (key === "0") {
-                button.classList.add("selected");
-            }
-
-            document.querySelector("#homeSection #levelOptions").appendChild(button);
-        };
-
-        // load game characters
-        for (let character in CHARACTERS) {
-            let assetPath = CHARACTERS[character].assetPath;
-            let characterObj = document.createElement("div");
-
-            characterObj.style.backgroundImage = `url("images/${assetPath}")`;
-            characterObj.classList.add("character-entry");
-            characterObj.setAttribute("data-id", character);
-
-            document.querySelector("#charactersList").appendChild(characterObj);
-        }
-        document.querySelector("#charactersList .character-entry:nth-child(1)").classList.add("selected");
-        this._updateSelectedCharacter();
-
-        this._addHomeListeners();
-    }
-
-    _initGameScreen() {
-        // create the canvas
-        this._canvas = document.createElement('canvas');
-        this._ctx = canvas.getContext('2d');
-
-        this._canvas.width = 505;
-        this._canvas.height = 606;
-        this._canvas.id = "gameCanvas";
-
-        querySelector("#gameGrid").appendChild(canvas);
-
-        // load the resources
-        Resources.load([
+        this._assets = [
             'images/stone-block.png',
             'images/water-block.png',
             'images/grass-block.png',
-            'images/enemy-bug.png',
-            'images/char-boy.png'
-        ]);
-        Resources.onReady(this._onAssetsReady.bind(this));
-    }
+            'images/enemy-bug.png'
+        ];
+        this._allEnemies = [];
+        this._player = null;
+        this._canvas = null;
+        this._gameCompleted = false;
 
-    _onResourcesLoaded() {
-        this._assetsReady = true;
-    }
-
-    _updateSelectedCharacter() {
-        let selectedCharacter = document.querySelector("#charactersList .character-entry.selected");
-        let selectedObjImg = document.querySelector("#characterSelected div:nth-child(1)");
-        let selectedObjName = document.querySelector("#characterSelected div:nth-child(2)");
-        let character = selectedCharacter.getAttribute("data-id");
-
-        selectedObjImg.style.backgroundImage = selectedCharacter.style.backgroundImage;
-        selectedObjName.innerText = CHARACTERS[character].name;
-
-        this._selectedCharacter = character;
-    }
-
-    /*
-     * Listen to a click event on the level buttons to select it.
-     * Also listen to the resume button to go back to the game without restarting it.
-     */
-    _addHomeListeners() {
-        document.getElementById("levelOptions").addEventListener("click", this._selectLevel.bind(this));
-        document.getElementById("levelCharacter").addEventListener("click", this._onCharacterSelected.bind(this))
-    	document.querySelector(".btn-resume").addEventListener("click", this._loadGame.bind(this));
-    }
-
-    /*
-     * Stop listening to the interactions on the level and resume buttons.
-     */
-    _removeHomeListeners() {
-    	document.getElementById("levelOptions").removeEventListener("click", this._selectLevel.bind(this));
-    	document.querySelector(".btn-resume").removeEventListener("click", this._loadGame.bind(this));
-    }
-
-    /*
-     * Event callback method to select a level
-     * @param event {Object}
-     */
-    _selectLevel(event) {
-    	if (event.target.classList.contains("btn-level")) {
-    		// remove selection from currently selected button
-    		let currentlySelectedButton = document.querySelector(".btn-level.selected");
-    		if (currentlySelectedButton) {
-    			currentlySelectedButton.classList.remove("selected")
-    		}
-    		// add selection to the button that has just been clicked
-    		event.target.classList.add("selected");
-
-    		// eventually disable resume option
-    		this._checkResumeButton();
-    	}
+        this._startGame();
     }
 
     /**
-     * Add loading class to clicked button then show the game page
+	* Returns the level of the game
+	*
+	* @returns {Number} (for a list of available levels see GAME_LEVELS const)
+	*/
+	getLevel() {
+		return this._level;
+	}
+
+	/**
+	* Method to get the time passed from the start of the game.
+	* If the game is completed will always return the total time of the game.
+	* NOTE: this method returns a nicely formatted string as "(dd::)hh:mm:ss"
+	*
+	* @returns {String}
+	*/
+	getElapsedTime() {
+		let endTime = this._stopTime ? this._stopTime : new Date();
+		let msElapsed = endTime - this._startTime;
+		let formattedElapsedTime = formatTimeToString(msElapsed);
+
+		return formattedElapsedTime;
+	}
+
+    /**
+     * Load game assets,
+     * create game canvas, player and enemies
      *
-     * @param {Object} event
+     * @private
      */
-    _loadGame(event) {
-    	let callback = startGame;
-    	event.target.classList.add("loading");
+    _startGame() {
+        // create Resources and draw canvas
+        this._gameCompleted = false;
+        this._lastTime = new Date();
+        this._assets.push(`images/${CHARACTERS[this._selectedCharacter].assetPath}`);
+        Resources.onReady(this.update.bind(this));
+        Resources.load(this._assets);
 
-    	if (event.target.classList.contains("btn-resume")) {
-    		callback = showGame;
-    	}
+        // create game canvas
+        this._canvas = document.createElement('canvas');
+        this._canvas.width = 505;
+        this._canvas.height = 606;
+        this._canvas.id = "gameCanvas";
+        document.querySelector("#gameContainer").appendChild(this._canvas);
 
-    	setTimeout(() => {
-    		for (let loadingElement of document.querySelectorAll(".loading")) {
-    			loadingElement.classList.remove("loading");
-    		}
+        // create characters
+        this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
+        this._player = new Player(this._selectedCharacter);
 
-    		callback();
-    	}, 1000);
+    	// removeHomeListeners();
+    	// addGameListeners();
+
+    	// sounds.gameTheme.play();
     }
 
     /**
-     * Disable resume button when selected level button does not match with current
-     * game level. Enable otherwise.
+     * Updates enemies and player position,
+     * checks if player touched a ladybird (checkCollisions),
+     * checks if the player has reached the water (gameCompleted).
+     * Recursive method on next frame.
+     *
+     * @private
      */
-    _checkResumeButton() {
-    	let resumeBtn = document.querySelector(".btn-resume");
-    	let selectedLevelButton = document.querySelector(".btn-level.selected");
+    update() {
+        let now = Date.now();
+        let dt = (now - this._lastTime) / 1000.0;
 
-    	if (!resumeBtn.classList.contains("hidden")) {
-    		if (selectedLevelButton.dataset.level != gameMatch.getLevel()) {
-    			resumeBtn.disabled = true;
-    		} else {
-    			resumeBtn.disabled = false;
-    		}
-    	}
+        // update characters positions
+        this._allEnemies.forEach(function(enemy) {
+            enemy.update(dt);
+        });
+        this._player.update();
+
+        // check for collisions
+        if (this._checkCollisions()) {
+            this._player.onLadybirdTouch();
+        }
+
+        // check if the game is completed
+        this._gameCompleted = this._player.hasReachedWater();
+
+        // re-renderer on screen
+        this._render();
+
+        this._lastTime = now;
+
+        if (this._gameCompleted) {
+            setTimeout(this._onLevelCompleted.bind(this), 100);
+        } else {
+            window.requestAnimationFrame(this.update.bind(this));
+        }
     }
 
-    _onCharacterSelected(event) {
-        if (event.target.classList.contains("character-entry")) {
-            document.querySelector("#charactersList .character-entry.selected").classList.remove("selected");
-            event.target.classList.add("selected");
+    /**
+     * Check if a player has touched a ladybird
+     *
+     * @return {Boolean} collision
+     * @private
+     */
+    _checkCollisions() {
+        let collision = false;
 
-            this._updateSelectedCharacter();
+        for (let enemy of this._allEnemies) {
+            collision = ((this._player.getPositionX() >= enemy.getPositionX() - 50) &&
+                         (this._player.getPositionX() <= enemy.getPositionX() + 50)) &&
+                        ((this._player.getPositionY() >= enemy.getPositionY() - 37) &&
+                         (this._player.getPositionY() <= enemy.getPositionY() + 37));
         }
+
+        return collision;
+    }
+
+    /**
+     * Redraw the whole canvas with all characters in their updated positions
+     *
+     * @private
+     */
+    _render() {
+        let ctx = this._canvas.getContext('2d');
+
+        // add game background to canvas
+        let rowImages = [
+                'images/water-block.png',   // Top row is water
+                'images/stone-block.png',   // Row 1 of 3 of stone
+                'images/stone-block.png',   // Row 2 of 3 of stone
+                'images/stone-block.png',   // Row 3 of 3 of stone
+                'images/grass-block.png',   // Row 1 of 2 of grass
+                'images/grass-block.png'    // Row 2 of 2 of grass
+            ];
+        let numRows = 6;
+        let numCols = 5;
+
+        // Before drawing, clear existing canvas
+        ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+        // Loop through the number of rows and columns we've defined above
+        // and, using the rowImages array, draw the correct image for that
+        // portion of the "grid"
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+            }
+        }
+
+        // renderer characters
+        this._allEnemies.forEach(function(enemy) {
+            enemy.render();
+        });
+
+        this._player.render();
+    }
+
+    /**
+     * Display game result dialog with updated level's informations
+     *
+     * @private
+     */
+    _onLevelCompleted() {
+        alert(`HORRAY! \n Well done ${this._player.getName()}!`)
     }
 }

@@ -67,43 +67,66 @@ class Player extends Character {
     }
 
     _handleInput(move) {
-        switch (move) {
-            case "left":
-                this._x -= 100;
-                if (this._x < BOUNDARIES["left"]) {
-                    this._x = BOUNDARIES["left"];
-                }
-                break;
-            case "up":
-                this._y -= 80;
-                if (this._y < BOUNDARIES["up"]) {
-                    this._waterReached = true;
-                    document.removeEventListener("keyup", this._methods.onKeyPressed);
-                }
-                break;
-            case "right":
-                this._x += 100;
-                if (this._x > BOUNDARIES["right"]) {
-                    this._x = BOUNDARIES["right"];
-                }
-                break;
-            case "down":
-                this._y += 80;
-                if (this._y > BOUNDARIES["down"]) {
-                    this._y = BOUNDARIES["down"];
-                }
-                break;
+        if (!this._animating) {
+            switch (move) {
+                case "left":
+                    this._x -= 100;
+                    if (this._x < BOUNDARIES["left"]) {
+                        this._x = BOUNDARIES["left"];
+                    }
+                    break;
+                case "up":
+                    this._y -= 80;
+                    if (this._y < BOUNDARIES["up"]) {
+                        this._waterReached = true;
+                        document.removeEventListener("keyup", this._methods.onKeyPressed);
+                    }
+                    break;
+                case "right":
+                    this._x += 100;
+                    if (this._x > BOUNDARIES["right"]) {
+                        this._x = BOUNDARIES["right"];
+                    }
+                    break;
+                case "down":
+                    this._y += 80;
+                    if (this._y > BOUNDARIES["down"]) {
+                        this._y = BOUNDARIES["down"];
+                    }
+                    break;
+            }
         }
     }
 
+    /**
+     * Whenever the player is touching a lady bird play a shake animation
+     * on the player.
+     */
     onLadybirdTouch() {
-        console.info("AUCH");
+        let left = false;
+        let repeat = 8;
+        let interval = 60;
+        let animation;
+        let shake = () => {
+            if (left) { this._x -= 5; }
+            else { this._x += 5; }
 
-        // animate crash
+            left = !left;
+            repeat--;
 
-        // reset position
-        this._x = BOUNDARIES.left;
-        this._y = BOUNDARIES.down;
+            if (repeat) {
+                animation = window.requestAnimationFrame(shake);
+            } else {
+                window.cancelAnimationFrame(animation);
+
+                this._x = BOUNDARIES.left;
+                this._y = BOUNDARIES.down;
+
+                this._animating = false;
+            }
+        }
+        window.requestAnimationFrame(shake);
+        this._animating = true;
     }
 
     hasReachedWater() {

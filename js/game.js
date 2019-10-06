@@ -127,6 +127,9 @@ class ArcadeGame {
                          (this._player.getPositionX() <= enemy.getPositionX() + 50)) &&
                         ((this._player.getPositionY() >= enemy.getPositionY() - 37) &&
                          (this._player.getPositionY() <= enemy.getPositionY() + 37));
+            if (collision) {
+                break;
+            }
         }
 
         return collision;

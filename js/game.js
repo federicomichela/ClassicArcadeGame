@@ -11,6 +11,7 @@ class ArcadeGame {
      * @private
      */
     initialise(level, playerCharacter) {
+        this._gameContainer = document.querySelector("#gameContainer");
         this._startTime = new Date();
         this._stopTime = null;
         this._lastTime = new Date();
@@ -27,16 +28,30 @@ class ArcadeGame {
         this._gameCompleted = false;
         this._requestFrameID = null;
 
+        // create lifespan bar
+        let progressBarOuter = document.createElement("div");
+        let progressBarInner = document.createElement("div");
+        this._lifeSpanBar = document.createElement("div");
+
+        progressBarOuter.classList.add("progress-bar-outer");
+        progressBarInner.classList.add("progress-bar-inner");
+        this._lifeSpanBar.classList.add("progress-bar");
+        this._lifeSpanBar.id = "lifeSpanBar";
+
+        progressBarOuter.appendChild(progressBarInner);
+        this._lifeSpanBar.appendChild(progressBarOuter);
+        this._gameContainer.appendChild(this._lifeSpanBar);
+
         // create game canvas
         this._canvas = document.createElement('canvas');
         this._canvas.width = 505;
         this._canvas.height = 606;
         this._canvas.id = "gameCanvas";
-        document.querySelector("#gameContainer").appendChild(this._canvas);
+        this._gameContainer.appendChild(this._canvas);
 
         // create characters
         this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
-        this._player = new Player(this._selectedCharacter);
+        this._player = new Player(this._selectedCharacter, this._lifeSpanBar);
 
         // load resources
         Resources.load(this._assets);
@@ -46,9 +61,6 @@ class ArcadeGame {
         } else {
             Resources.onReady(this.update.bind(this));
         }
-
-    	// removeHomeListeners();
-    	// addGameListeners();
 
     	// sounds.gameTheme.play();
     }
@@ -94,10 +106,7 @@ class ArcadeGame {
      * @return {Number}
      */
     getStarRating() {
-        let lifespanRatio = (10-this._player.getLifespan()) * 0.5;
-        let timeRatio = (this._stopTime - this._startTime) > 15000 ? (15000 - this._stopTime - this._startTime) * 0.5 : 0;
-        let starRating = 100 + timeRatio - lifespanRatio;
-        return starRating;
+        return this._player.getLifespan() * 100 / MAX_LIFESPAN;
     }
 
     /**
@@ -108,7 +117,7 @@ class ArcadeGame {
 
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
 
-        this._canvas.remove();
+        this._gameContainer.innerHTML = "";
 
         window.cancelAnimationFrame(this._requestFrameID);
 
@@ -136,12 +145,12 @@ class ArcadeGame {
         this._player.update();
 
         // check for collisions
-        if (this._checkCollisions()) {
+        if (this._checkCollisions() && !this._player.animatingCollistion()) {
             this._player.onLadybirdTouch();
         }
 
         // check if the game is completed
-        this._gameCompleted = this._player.hasReachedWater();
+        this._gameCompleted = this._player.hasReachedWater() || !this._player.alive();
 
         // re-renderer on screen
         this._render();

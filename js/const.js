@@ -1,5 +1,7 @@
 const MAX_STARS = 5;
 
+const MAX_LIFESPAN = 10;
+
 const GAME_LEVELS = {
 	0: "Easy",
 	1: "Classic",

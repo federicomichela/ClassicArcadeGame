@@ -47,11 +47,14 @@ class Enemy extends Character {
 // This class requires an update(), render() and
 // a handleInput() method.
 class Player extends Character {
-    constructor(character) {
+    constructor(character, lifeSpanBar) {
         super(`images/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
 
         this._name = CHARACTERS[character].name;
-        this._lifespan = 10;
+        this._lifeSpan = MAX_LIFESPAN;
+        this._lifeSpanBar = lifeSpanBar;
+        this._animatingCollision = false;
+        this._waterReached = false;
 
         this._methods = {
             "onKeyPressed": this._onKeyPressed.bind(this)
@@ -59,11 +62,7 @@ class Player extends Character {
         // This listens for key presses and sends the keys to your
         // Player.handleInput() method. You don't need to modify this.
         document.addEventListener("keyup", this._methods.onKeyPressed);
-
-        this._waterReached = false;
     }
-
-
 
     /**
      * Whenever the player is touching a lady bird play a shake animation
@@ -89,13 +88,12 @@ class Player extends Character {
                 this._x = BOUNDARIES.left;
                 this._y = BOUNDARIES.down;
 
-                this._animating = false;
+                this._animatingCollision = false;
+                this._updateLifeSpan(-1);
             }
         }
         window.requestAnimationFrame(shake);
-        this._animating = true;
-
-        this._lifespan -= 1;
+        this._animatingCollision = true;
     }
 
     hasReachedWater() {
@@ -107,7 +105,15 @@ class Player extends Character {
     }
 
     getLifespan() {
-        return this._lifespan;
+        return this._lifeSpan;
+    }
+
+    animatingCollistion() {
+        return this._animatingCollision;
+    }
+
+    alive() {
+        return this._lifeSpan > 0;
     }
 
     _onKeyPressed(event) {
@@ -150,5 +156,15 @@ class Player extends Character {
                     break;
             }
         }
+    }
+
+    _updateLifeSpan(delta) {
+        this._lifeSpan += delta;
+
+        let lifeSpanPerc = 100 * this._lifeSpan / MAX_LIFESPAN;
+
+        if (lifeSpanPerc > 100) { lifeSpanPerc = 100; }
+
+        this._lifeSpanBar.querySelector(".progress-bar-inner").style.width = `${lifeSpanPerc}%`;
     }
 }

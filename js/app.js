@@ -51,6 +51,7 @@ class Player extends Character {
         super(`images/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
 
         this._name = CHARACTERS[character].name;
+        this._lifespan = 10;
 
         this._methods = {
             "onKeyPressed": this._onKeyPressed.bind(this)
@@ -62,41 +63,7 @@ class Player extends Character {
         this._waterReached = false;
     }
 
-    _onKeyPressed(event) {
-        this._handleInput(ALLOWED_KEYS[event.keyCode]);
-    }
 
-    _handleInput(move) {
-        if (!this._animating) {
-            switch (move) {
-                case "left":
-                    this._x -= 100;
-                    if (this._x < BOUNDARIES["left"]) {
-                        this._x = BOUNDARIES["left"];
-                    }
-                    break;
-                case "up":
-                    this._y -= 80;
-                    if (this._y < BOUNDARIES["up"]) {
-                        this._waterReached = true;
-                        document.removeEventListener("keyup", this._methods.onKeyPressed);
-                    }
-                    break;
-                case "right":
-                    this._x += 100;
-                    if (this._x > BOUNDARIES["right"]) {
-                        this._x = BOUNDARIES["right"];
-                    }
-                    break;
-                case "down":
-                    this._y += 80;
-                    if (this._y > BOUNDARIES["down"]) {
-                        this._y = BOUNDARIES["down"];
-                    }
-                    break;
-            }
-        }
-    }
 
     /**
      * Whenever the player is touching a lady bird play a shake animation
@@ -127,6 +94,8 @@ class Player extends Character {
         }
         window.requestAnimationFrame(shake);
         this._animating = true;
+
+        this._lifespan -= 1;
     }
 
     hasReachedWater() {
@@ -135,5 +104,51 @@ class Player extends Character {
 
     getName() {
         return this._name;
+    }
+
+    getLifespan() {
+        return this._lifespan;
+    }
+
+    _onKeyPressed(event) {
+        this._handleInput(ALLOWED_KEYS[event.keyCode]);
+    }
+
+    /**
+     * Update the player position based on the key pressed
+     *
+     * @param {String} move <left | right | up | down>
+     * @private
+     */
+    _handleInput(move) {
+        if (!this._animating) {
+            switch (move) {
+                case "left":
+                    this._x -= 100;
+                    if (this._x < BOUNDARIES["left"]) {
+                        this._x = BOUNDARIES["left"];
+                    }
+                    break;
+                case "up":
+                    this._y -= 80;
+                    if (this._y < BOUNDARIES["up"]) {
+                        this._waterReached = true;
+                        document.removeEventListener("keyup", this._methods.onKeyPressed);
+                    }
+                    break;
+                case "right":
+                    this._x += 100;
+                    if (this._x > BOUNDARIES["right"]) {
+                        this._x = BOUNDARIES["right"];
+                    }
+                    break;
+                case "down":
+                    this._y += 80;
+                    if (this._y > BOUNDARIES["down"]) {
+                        this._y = BOUNDARIES["down"];
+                    }
+                    break;
+            }
+        }
     }
 }

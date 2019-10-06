@@ -298,6 +298,7 @@ button.btn-full:disabled { color: #a99c9c; }
 
 
 #gameResultSection {
+	height: 100%;
 	background-color: rgba(3,3,3,0.5);
 	position: absolute;
 	top: 0;

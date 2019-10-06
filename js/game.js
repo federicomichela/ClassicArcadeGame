@@ -1,4 +1,7 @@
 class ArcadeGame {
+    constructor(onLevelCompleted) {
+        this._onLevelCompletedCallback = onLevelCompleted;
+    }
 
     /**
      * Initialise game by loading the game assets,
@@ -74,6 +77,32 @@ class ArcadeGame {
 		return formattedElapsedTime;
 	}
 
+    /**
+     * Check if the game has been completed
+     *
+     * @return {Boolean}
+     */
+    gameCompleted() {
+        return this._gameCompleted;
+    }
+
+    /**
+     * Get the star rating.
+     * Star Rating is computed by checking the ratio between the lifespan
+     * and the time elapsed.
+     *
+     * @return {Number}
+     */
+    getStarRating() {
+        let lifespanRatio = (10-this._player.getLifespan()) * 0.5;
+        let timeRatio = (this._stopTime - this._startTime) > 15000 ? (15000 - this._stopTime - this._startTime) * 0.5 : 0;
+        let starRating = 100 + timeRatio - lifespanRatio;
+        return starRating;
+    }
+
+    /**
+     * Clear canvas, remove it from the DOM and reset all game attributes
+     */
     destroy() {
         let ctx = this._canvas.getContext('2d');
 
@@ -194,6 +223,8 @@ class ArcadeGame {
      * @private
      */
     _onLevelCompleted() {
-        alert(`HORRAY! \n Well done ${this._player.getName()}!`)
+        this._stopTime = new Date();
+
+        this._onLevelCompletedCallback();
     }
 }

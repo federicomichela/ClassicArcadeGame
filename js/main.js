@@ -245,7 +245,7 @@ function initialiseGame(level) {
 	if (gameMatch) {
 		gameMatch.destroy();
 	} else {
-		gameMatch = new ArcadeGame(level, selectedCharacter);
+		gameMatch = new ArcadeGame(showGameResult);
 	}
 
 	gameMatch.initialise(level, selectedCharacter);
@@ -300,34 +300,6 @@ function selectLevel(event) {
 
 		// eventually disable resume option
 		checkResumeButton();
-	}
-}
-
-/*
- * Callback method to update the DOM based on the result returned by flipping
- * a card.
- * @param result {Object}
- */
-function onActionResultReceived(result) {
-	switch (result.action) {
-		case GAME_ACTIONS.retry:
-			setTimeout(shakePair.bind(this, result.pair), 1000);
-			setTimeout(coverPair.bind(this, result.pair), 1500);
-			break;
-		case GAME_ACTIONS.match:
-			setTimeout(matchPair.bind(this, result.pair), 750 );
-
-			if (result.completed) {
-				// stop clock on game page
-				clearInterval(clockID);
-
-				setTimeout(showGameResult, 2000);
-			}
-
-			break;
-		case GAME_ACTIONS.wait:
-			addGameListeners();
-			break;
 	}
 }
 

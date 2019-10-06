@@ -1,3 +1,5 @@
+const MAX_STARS = 5;
+
 const GAME_LEVELS = {
 	0: "Easy",
 	1: "Classic",

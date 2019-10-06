@@ -1,8 +1,16 @@
 class ArcadeGame {
-    constructor(level, playerCharacter) {
+
+    /**
+     * Initialise game by loading the game assets,
+     * creating the game canvas, player and enemies
+     * and starting the renderering loop
+     *
+     * @private
+     */
+    initialise(level, playerCharacter) {
         this._startTime = new Date();
         this._stopTime = null;
-        this._lastTime = null;
+        this._lastTime = new Date();
         this._selectedLevel = level;
         this._selectedCharacter = playerCharacter;
         this._assetsReady = false;
@@ -10,15 +18,36 @@ class ArcadeGame {
             'images/stone-block.png',
             'images/water-block.png',
             'images/grass-block.png',
-            'images/enemy-bug.png'
+            'images/enemy-bug.png',
+            `images/${CHARACTERS[this._selectedCharacter].assetPath}`
         ];
-        this._allEnemies = [];
-        this._player = null;
-        this._canvas = null;
         this._gameCompleted = false;
         this._requestFrameID = null;
 
-        this._startGame();
+        // create game canvas
+        this._canvas = document.createElement('canvas');
+        this._canvas.width = 505;
+        this._canvas.height = 606;
+        this._canvas.id = "gameCanvas";
+        document.querySelector("#gameContainer").appendChild(this._canvas);
+
+        // create characters
+        this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
+        this._player = new Player(this._selectedCharacter);
+
+        // load resources
+        Resources.load(this._assets);
+
+        if (Resources.isReady()) {
+            this.update();
+        } else {
+            Resources.onReady(this.update.bind(this));
+        }
+
+    	// removeHomeListeners();
+    	// addGameListeners();
+
+    	// sounds.gameTheme.play();
     }
 
     /**
@@ -57,43 +86,6 @@ class ArcadeGame {
         this._allEnemies = [];
         this._player = [];
         this._gameCompleted = true;
-    }
-
-    /**
-     * Load game assets,
-     * create game canvas, player and enemies
-     *
-     * @private
-     */
-    _startGame() {
-        // create Resources and draw canvas
-        this._gameCompleted = false;
-        this._lastTime = new Date();
-        this._assets.push(`images/${CHARACTERS[this._selectedCharacter].assetPath}`);
-
-        // create game canvas
-        this._canvas = document.createElement('canvas');
-        this._canvas.width = 505;
-        this._canvas.height = 606;
-        this._canvas.id = "gameCanvas";
-        document.querySelector("#gameContainer").appendChild(this._canvas);
-
-        // create characters
-        this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
-        this._player = new Player(this._selectedCharacter);
-
-        Resources.load(this._assets);
-
-        if (Resources.isReady()) {
-            this.update();
-        } else {
-            Resources.onReady(this.update.bind(this));
-        }
-
-    	// removeHomeListeners();
-    	// addGameListeners();
-
-    	// sounds.gameTheme.play();
     }
 
     /**

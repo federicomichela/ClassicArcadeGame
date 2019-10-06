@@ -241,7 +241,14 @@ function checkResumeButton() {
  */
 function initialiseGame(level) {
 	let selectedCharacter = document.querySelector("#charactersList .selected").getAttribute("data-id");
-	gameMatch = new ArcadeGame(level, selectedCharacter);
+
+	if (gameMatch) {
+		gameMatch.destroy();
+	} else {
+		gameMatch = new ArcadeGame(level, selectedCharacter);
+	}
+
+	gameMatch.initialise(level, selectedCharacter);
 
 	enableResumeButtons();
 	showGame();
@@ -264,8 +271,6 @@ function startGame() {
  */
 function resetGame() {
 	let level = gameMatch.getLevel();
-
-	gameMatch.destroy();
 
 	initialiseGame(level);
 }

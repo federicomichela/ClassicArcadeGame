@@ -16,6 +16,7 @@ class ArcadeGame {
         this._player = null;
         this._canvas = null;
         this._gameCompleted = false;
+        this._requestFrameID = null;
 
         this._startGame();
     }
@@ -26,7 +27,7 @@ class ArcadeGame {
 	* @returns {Number} (for a list of available levels see GAME_LEVELS const)
 	*/
 	getLevel() {
-		return this._level;
+		return this._selectedLevel;
 	}
 
 	/**
@@ -44,6 +45,20 @@ class ArcadeGame {
 		return formattedElapsedTime;
 	}
 
+    destroy() {
+        let ctx = this._canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+        this._canvas.remove();
+
+        window.cancelAnimationFrame(this._requestFrameID);
+
+        this._allEnemies = [];
+        this._player = [];
+        this._gameCompleted = true;
+    }
+
     /**
      * Load game assets,
      * create game canvas, player and enemies
@@ -55,8 +70,6 @@ class ArcadeGame {
         this._gameCompleted = false;
         this._lastTime = new Date();
         this._assets.push(`images/${CHARACTERS[this._selectedCharacter].assetPath}`);
-        Resources.onReady(this.update.bind(this));
-        Resources.load(this._assets);
 
         // create game canvas
         this._canvas = document.createElement('canvas');
@@ -68,6 +81,14 @@ class ArcadeGame {
         // create characters
         this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
         this._player = new Player(this._selectedCharacter);
+
+        Resources.load(this._assets);
+
+        if (Resources.isReady()) {
+            this.update();
+        } else {
+            Resources.onReady(this.update.bind(this));
+        }
 
     	// removeHomeListeners();
     	// addGameListeners();
@@ -109,7 +130,7 @@ class ArcadeGame {
         if (this._gameCompleted) {
             setTimeout(this._onLevelCompleted.bind(this), 100);
         } else {
-            window.requestAnimationFrame(this.update.bind(this));
+            this._requestFrameID = window.requestAnimationFrame(this.update.bind(this));
         }
     }
 

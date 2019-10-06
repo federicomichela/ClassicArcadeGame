@@ -93,7 +93,7 @@ function checkGameFocus() {
 		gameThemePaused = true;
 	} else {
 		if (gameThemePaused) {
-			sounds.gameTheme.play();
+			// sounds.gameTheme.play();
 			gameThemePaused = false;
 		}
 	}
@@ -131,7 +131,7 @@ function showGame() {
 	removeHomeListeners();
 	addGameListeners();
 
-	sounds.gameTheme.play();
+	// sounds.gameTheme.play();
 }
 
 /*
@@ -168,7 +168,7 @@ function showGameResult() {
 		sounds[sound].pause();
 		sounds[sound].load();
 	}
-	sounds.levelComplete.play();
+	// sounds.levelComplete.play();
 
 	disableResumeButtons();
 	removeHomeListeners();
@@ -264,6 +264,8 @@ function startGame() {
  */
 function resetGame() {
 	let level = gameMatch.getLevel();
+
+	gameMatch.destroy();
 
 	initialiseGame(level);
 }

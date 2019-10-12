@@ -19,11 +19,11 @@ class ArcadeGame {
         this._selectedCharacter = playerCharacter;
         this._assetsReady = false;
         this._assets = [
-            'images/stone-block.png',
-            'images/water-block.png',
-            'images/grass-block.png',
-            'images/enemy-bug.png',
-            `images/${CHARACTERS[this._selectedCharacter].assetPath}`
+            'images/assets/stone-block.png',
+            'images/assets/water-block.png',
+            'images/assets/grass-block.png',
+            'images/assets/enemy-bug.png',
+            `images/assets/${CHARACTERS[this._selectedCharacter].assetPath}`
         ];
         this._gameCompleted = false;
         this._requestFrameID = null;
@@ -304,12 +304,12 @@ class ArcadeGame {
 
         // add game background to canvas
         let rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/assets/water-block.png',   // Top row is water
+                'images/assets/stone-block.png',   // Row 1 of 3 of stone
+                'images/assets/stone-block.png',   // Row 2 of 3 of stone
+                'images/assets/stone-block.png',   // Row 3 of 3 of stone
+                'images/assets/grass-block.png',   // Row 1 of 2 of grass
+                'images/assets/grass-block.png'    // Row 2 of 2 of grass
             ];
         let numRows = 6;
         let numCols = 5;

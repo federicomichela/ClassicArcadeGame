@@ -38,7 +38,7 @@ function loadGameCharacters() {
 		let assetPath = CHARACTERS[character].assetPath;
 		let characterObj = document.createElement("div");
 
-		characterObj.style.backgroundImage = `url("images/${assetPath}")`;
+		characterObj.style.backgroundImage = `url("images/assets/${assetPath}")`;
 		characterObj.classList.add("character-entry");
 		characterObj.setAttribute("data-id", character);
 

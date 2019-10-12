@@ -28,7 +28,7 @@ class Character {
 class Enemy extends Character {
     constructor(positionX, positionY) {
         super(
-            'images/enemy-bug.png',
+            'images/assets/enemy-bug.png',
             positionX || (-100 + getRandomInt(1, 6)*100),
             positionY || (-20 + getRandomInt(1, 4)*80)
         );
@@ -52,7 +52,7 @@ class Enemy extends Character {
 // a handleInput() method.
 class Player extends Character {
     constructor(character, lifeSpanBar) {
-        super(`images/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
+        super(`images/assets/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
 
         this._name = CHARACTERS[character].name;
         this._lifeSpan = MAX_LIFESPAN;

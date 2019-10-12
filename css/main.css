@@ -287,8 +287,11 @@ button.btn-full:disabled { color: #a99c9c; }
 	align-items: center;
 	padding: 30px;
 }
-#gameResultSection .dialog > h2,
-#gameResultSection .dialog > h3 { width: 100%; }
+#gameResultSection .dialog > h2 {
+	width: 100%;
+	font-size: 4em;
+    font-weight: 100;
+}
 
 .star,
 .progress-bar {

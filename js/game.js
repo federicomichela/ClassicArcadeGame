@@ -27,42 +27,13 @@ class ArcadeGame {
         ];
         this._gameCompleted = false;
         this._requestFrameID = null;
+        this._crawlAudioPlaying = false;
+        this._audioPaused = false;
 
-        // create lifespan bar
-        let progressBarOuter = document.createElement("div");
-        let progressBarInner = document.createElement("div");
-        this._lifeSpanBar = document.createElement("div");
+        this._createLifeSpanBar();
+        this._initialiseGameContainer();
 
-        progressBarOuter.classList.add("progress-bar-outer");
-        progressBarInner.classList.add("progress-bar-inner");
-        this._lifeSpanBar.classList.add("progress-bar");
-        this._lifeSpanBar.id = "lifeSpanBar";
-
-        progressBarOuter.appendChild(progressBarInner);
-        this._lifeSpanBar.appendChild(progressBarOuter);
-        this._gameContainer.appendChild(this._lifeSpanBar);
-
-        // create game canvas
-        this._canvas = document.createElement('canvas');
-        this._canvas.width = 505;
-        this._canvas.height = 606;
-        this._canvas.id = "gameCanvas";
-        this._gameContainer.appendChild(this._canvas);
-
-        // create characters
-        this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
-        this._player = new Player(this._selectedCharacter, this._lifeSpanBar);
-
-        // load resources
-        Resources.load(this._assets);
-
-        if (Resources.isReady()) {
-            this.update();
-        } else {
-            Resources.onReady(this.update.bind(this));
-        }
-
-    	// sounds.gameTheme.play();
+    	this.startAudio("gameTheme");
     }
 
     /**
@@ -124,6 +95,8 @@ class ArcadeGame {
         this._allEnemies = [];
         this._player = [];
         this._gameCompleted = true;
+
+        this.stopAudio();
     }
 
     /**
@@ -149,6 +122,8 @@ class ArcadeGame {
             this._player.onLadybirdTouch();
         }
 
+        this._checkAudio();
+
         // check if the game is completed
         this._gameCompleted = this._player.hasReachedWater() || !this._player.alive();
 
@@ -161,6 +136,119 @@ class ArcadeGame {
             setTimeout(this._onLevelCompleted.bind(this), 100);
         } else {
             this._requestFrameID = window.requestAnimationFrame(this.update.bind(this));
+        }
+    }
+
+    /**
+     * Pause all audio
+     *
+     * @param trackName {String}
+     */
+    pauseAudio(trackName) {
+        if (trackName) {
+            GAME_SOUNDS[trackName].audio.pause();
+        } else {
+            for (let sound in GAME_SOUNDS) {
+                GAME_SOUNDS[sound].audio.pause();
+            }
+
+            this._audioPaused = true;
+        }
+    }
+
+    /**
+     * Start audio in playing status
+     *
+     * @param trackName {String}
+     * @param force {Boolean} play track even if state is not currently playing
+     */
+    startAudio(trackName, force=true) {
+        if (typeof trackName === "boolean") {
+            force = trackName;
+            trackName = null;
+        }
+
+        if (trackName) {
+            if (force || GAME_SOUNDS[trackName].playing) {
+                GAME_SOUNDS[trackName].audio.play();
+                GAME_SOUNDS[trackName].playing = true;
+            }
+        } else {
+            for (let sound in GAME_SOUNDS) {
+                if (force || GAME_SOUNDS[sound].playing) {
+                    GAME_SOUNDS[sound].audio.play();
+                    GAME_SOUNDS[sound].playing = true;
+                }
+            }
+
+            this._audioPaused = false;
+        }
+    }
+
+    /**
+     * Stop all audio or a specific track
+     *
+     * @param trackName {String}
+     */
+    stopAudio(trackName) {
+        if (trackName) {
+            GAME_SOUNDS[trackName].audio.pause();
+            GAME_SOUNDS[trackName].audio.load();
+            GAME_SOUNDS[trackName].playing = false;
+        } else {
+            for (let sound in GAME_SOUNDS) {
+                GAME_SOUNDS[sound].audio.pause();
+                GAME_SOUNDS[sound].audio.load();
+                GAME_SOUNDS[sound].playing = false;
+        	}
+        }
+    }
+
+    /**
+     * Support method to create the lifespan bar for the player.
+     *
+     * @private
+     */
+    _createLifeSpanBar() {
+        let progressBarOuter = document.createElement("div");
+        let progressBarInner = document.createElement("div");
+
+        this._lifeSpanBar = document.createElement("div");
+
+        progressBarOuter.classList.add("progress-bar-outer");
+        progressBarInner.classList.add("progress-bar-inner");
+        this._lifeSpanBar.classList.add("progress-bar");
+        this._lifeSpanBar.id = "lifeSpanBar";
+
+        progressBarOuter.appendChild(progressBarInner);
+        this._lifeSpanBar.appendChild(progressBarOuter);
+        this._gameContainer.appendChild(this._lifeSpanBar);
+    }
+
+    /**
+     * Support method to create the game canvas, characters and load the assets
+     *
+     * @private
+     */
+    _initialiseGameContainer() {
+        // create game canvas
+        this._canvas = document.createElement('canvas');
+        this._canvas.width = 505;
+        this._canvas.height = 606;
+        this._canvas.id = "gameCanvas";
+        this._gameContainer.appendChild(this._canvas);
+
+        // create characters
+        this._allEnemies = [...new Array(ENEMIES[this._selectedLevel])].map(() => new Enemy());
+        this._player = new Player(this._selectedCharacter, this._lifeSpanBar);
+
+        // load resources
+        Resources.load(this._assets);
+
+        if (Resources.isReady()) {
+            this.update();
+        } else {
+            Resources.onReady(this.update.bind(this));
         }
     }
 
@@ -184,6 +272,21 @@ class ArcadeGame {
         }
 
         return collision;
+    }
+
+    _checkAudio() {
+        if (!this._audioPaused) {
+            let onScreen = [];
+
+            this._allEnemies.forEach( enemy => onScreen.push(enemy.onScreen()) );
+
+            // if no bugs are on screen, pause audio
+            if (onScreen.every(x => !x)) {
+                this.stopAudio("crawl");
+            } else if (!GAME_SOUNDS.crawl.playing){
+                this.startAudio("crawl");
+            }
+        }
     }
 
     /**

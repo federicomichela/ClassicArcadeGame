@@ -31,6 +31,7 @@ h1 {
 	margin: 0;
 	padding: 25px 50px;
 	color: #bf212f;
+	overflow-wrap: break-word;
 }
 
 footer {
@@ -345,7 +346,6 @@ button.btn-full:disabled { color: #a99c9c; }
 
 	#gameResultSection .dialog {
 		width: 768px;
-		height: 100%;
 	}
 
 	section .container { width: 768px; }

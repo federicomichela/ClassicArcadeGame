@@ -1,13 +1,4 @@
 let gameMatch, clockID, checkGameFocusIntervalID;
-let gameThemePaused = false;
-let sounds = {
-	"gameTheme": new Audio("audio/celticTheme.wav"),
-	"pairMatch": new Audio("audio/matchFound.wav"),
-	"wrongMatch": new Audio("audio/wrongMatch.wav"),
-	"levelComplete": new Audio("audio/levelComplete.mp3"),
-}
-
-sounds.gameTheme.loop = true;
 
 function initialiseHomePage() {
 	this.loadGameLevels();
@@ -89,13 +80,9 @@ function selectCharacter(event) {
  */
 function checkGameFocus() {
 	if (!document.hasFocus()) {
-		sounds.gameTheme.pause();
-		gameThemePaused = true;
+		gameMatch.pauseAudio();
 	} else {
-		if (gameThemePaused) {
-			// sounds.gameTheme.play();
-			gameThemePaused = false;
-		}
+		gameMatch.startAudio(false);
 	}
 }
 
@@ -113,8 +100,6 @@ function showHome() {
 	addHomeListeners();
 	removeGameListeners();
 	checkResumeButton();
-
-	sounds.gameTheme.pause();
 }
 
 /*
@@ -130,8 +115,6 @@ function showGame() {
 
 	removeHomeListeners();
 	addGameListeners();
-
-	// sounds.gameTheme.play();
 }
 
 /*
@@ -164,11 +147,12 @@ function showGameResult() {
 		}
 	}
 
-	for (let sound in sounds) {
-		sounds[sound].pause();
-		sounds[sound].load();
-	}
-	// sounds.levelComplete.play();
+	// handle audio
+	// for (let sound in GAME_SOUNDS) {
+	// 	GAME_SOUNDS[sound].pause();
+	// 	GAME_SOUNDS[sound].load();
+	// }
+	// GAME_SOUNDS.levelComplete.play();
 
 	disableResumeButtons();
 	removeHomeListeners();
@@ -261,8 +245,6 @@ function initialiseGame(level) {
 function startGame() {
 	let levelSelected = document.querySelector(".btn-level.selected").dataset.level;
 
-	sounds.gameTheme.load();
-
 	initialiseGame(levelSelected);
 }
 
@@ -313,7 +295,10 @@ function loadGame(event) {
 	event.target.classList.add("loading");
 
 	if (event.target.classList.contains("btn-resume")) {
-		callback = showGame;
+		callback = () => {
+			showGame();
+			gameMatch.startAudio(false);
+		}
 	}
 
 	setTimeout(() => {
@@ -354,7 +339,8 @@ function addGameListeners() {
  * Stop listening to the interactions on the cards
  */
 function removeGameListeners() {
-clearInterval(checkGameFocusIntervalID);
+	clearInterval(checkGameFocusIntervalID);
+	gameMatch.pauseAudio();
 }
 
 /*

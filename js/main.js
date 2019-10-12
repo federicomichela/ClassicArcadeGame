@@ -406,3 +406,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 	addNavigationListeners();
 	addHomeListeners();
 });
+
+window.addEventListener('scroll', function(e) {
+  document.querySelector("#gameResultSection").style.top = `${window.scrollY}px`;
+});

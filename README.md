@@ -1,6 +1,6 @@
 # ClassicArcadeGame
 
-Move by using the arrows on your keyboard.
+Move by using the arrows on your keyboard on by clicking in the game area.
 Reach the water to complete a game level.
 Be careful! Ladybirds are dangerous so try to avoid them!
 

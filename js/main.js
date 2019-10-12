@@ -120,21 +120,24 @@ function showGame() {
 /*
  * Show game result "dialog"
  */
-function showGameResult() {
+function showGameResult(success) {
 	if (!gameMatch.gameCompleted()) { return; }
 
-	document.getElementById("gameResultSection").classList.remove("hidden");
+	let gameResultSection = document.getElementById("gameResultSection");
+
+	gameResultSection.classList.remove("hidden");
 
 	// to simulate a real dialog prevent page scrolling by hiding overflow
 	document.querySelector("body").classList.add("full-screen");
 
 	// update dialog with game results
-	document.getElementById("gameTotalTime").innerText = `Total time: ${gameMatch.getElapsedTime()}`;
+	gameResultSection.querySelector("#gameResultText").innerText = success? "Level Completed!" : "You Lost ☹";
+	gameResultSection.querySelector("#gameTotalTime").innerText = `Total time: ${gameMatch.getElapsedTime()}`;
 
 	// update stars rating
 	let rating = gameMatch.getStarRating();
 	let starRate = 100 / MAX_STARS;
-	for (let star of document.querySelectorAll(".star")) {
+	for (let star of gameResultSection.querySelectorAll(".star")) {
 		if (rating - starRate > 0) {
 			star.querySelector(".star-inner").style.width = "100%";
 			rating -= starRate;
@@ -146,13 +149,6 @@ function showGameResult() {
 			star.querySelector(".star-inner").style.width = "0%";
 		}
 	}
-
-	// handle audio
-	// for (let sound in GAME_SOUNDS) {
-	// 	GAME_SOUNDS[sound].pause();
-	// 	GAME_SOUNDS[sound].load();
-	// }
-	// GAME_SOUNDS.levelComplete.play();
 
 	disableResumeButtons();
 	removeHomeListeners();

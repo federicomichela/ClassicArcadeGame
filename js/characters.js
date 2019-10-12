@@ -52,7 +52,11 @@ class Enemy extends Character {
 // a handleInput() method.
 class Player extends Character {
     constructor(character, lifeSpanBar) {
-        super(`images/assets/${CHARACTERS[character].assetPath}`, BOUNDARIES.left, BOUNDARIES.down);
+        super(
+            `images/assets/${CHARACTERS[character].assetPath}`,
+            BOUNDARIES.left,
+            BOUNDARIES.down
+        );
 
         this._name = CHARACTERS[character].name;
         this._lifeSpan = MAX_LIFESPAN;
@@ -62,11 +66,12 @@ class Player extends Character {
         this._positionUpdated = false;
 
         this._methods = {
-            "onKeyPressed": this._onKeyPressed.bind(this)
+            "onKeyPressed": this._onKeyPressed.bind(this),
+            "onClick": this._onClick.bind(this)
         }
-        // This listens for key presses and sends the keys to your
-        // Player.handleInput() method. You don't need to modify this.
+
         document.addEventListener("keyup", this._methods.onKeyPressed);
+        document.getElementById("gameCanvas").addEventListener("click", this._methods.onClick);
     }
 
     update() {
@@ -129,8 +134,38 @@ class Player extends Character {
         return this._lifeSpan > 0;
     }
 
+    /**
+     * Make a move based on the key pressed
+     *
+     * @private
+     */
     _onKeyPressed(event) {
         this._handleInput(ALLOWED_KEYS[event.keyCode]);
+    }
+
+    /**
+     * Make a move based on the click coordinates
+     *
+     * @private
+     */
+    _onClick(event) {
+        let move;
+        console.info(event.offsetX)
+
+        if (event.offsetX - 50 >= this._x + 60) {
+            move = "right";
+        } else
+        if (event.offsetX - 50 <= this._x - 60) {
+            move = "left";
+        } else
+        if (event.offsetY-100 >= this._y) {
+            move = "down";
+        } else
+        if (event.offsetY-100 <= this._y) {
+            move = "up";
+        }
+
+        this._handleInput(move);
     }
 
     /**

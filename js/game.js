@@ -124,6 +124,7 @@ class ArcadeGame {
         // check for collisions
         if (this._checkCollisions() && !this._player.animatingCollistion()) {
             this._player.onLadybirdTouch();
+            this.stopAudio("collision");
             this.startAudio("collision");
         }
 
@@ -239,7 +240,7 @@ class ArcadeGame {
         // create game canvas
         this._canvas = document.createElement('canvas');
         this._canvas.width = 505;
-        this._canvas.height = 606;
+        this._canvas.height = 586;
         this._canvas.id = "gameCanvas";
         this._gameContainer.appendChild(this._canvas);
 
@@ -345,7 +346,7 @@ class ArcadeGame {
 
         this._stopTime = new Date();
 
-        this._onLevelCompletedCallback();
+        this._onLevelCompletedCallback(this._player.alive());
         this.startAudio(trackName);
     }
 }

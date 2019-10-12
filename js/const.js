@@ -56,11 +56,8 @@ const GAME_SOUNDS = {
 	"collision": { "audio": new Audio("audio/collision.wav"), "playing": false },
 	"crawl": { "audio": new Audio("audio/crawling-bugs.wav"), "playing": false },
 	"gameTheme": { "audio": new Audio("audio/theme.wav"), "playing": false },
-	"levelCompleteLoose": { "audio": new Audio("audio/jingleLoose.wav"), "playing": false },
-	"levelCompleteWin": { "audio": new Audio("audio/jingleWin.wav"), "playing": false },
+	"jingleLoose": { "audio": new Audio("audio/jingleLoose.wav"), "playing": false },
+	"jingleWin": { "audio": new Audio("audio/jingleWin.wav"), "playing": false },
 	"powerUp": { "audio": new Audio("audio/powerUp.wav"), "playing": false },
 	"step": { "audio": new Audio("audio/step.wav"), "playing": false },
 };
-
-GAME_SOUNDS.gameTheme.loop = true;
-GAME_SOUNDS.crawl.loop = true;

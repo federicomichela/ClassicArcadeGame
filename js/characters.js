@@ -59,6 +59,7 @@ class Player extends Character {
         this._lifeSpanBar = lifeSpanBar;
         this._animatingCollision = false;
         this._waterReached = false;
+        this._positionUpdated = false;
 
         this._methods = {
             "onKeyPressed": this._onKeyPressed.bind(this)
@@ -66,6 +67,14 @@ class Player extends Character {
         // This listens for key presses and sends the keys to your
         // Player.handleInput() method. You don't need to modify this.
         document.addEventListener("keyup", this._methods.onKeyPressed);
+    }
+
+    update() {
+        this._positionUpdated = false;
+    }
+
+    positionUpdated() {
+        return this._positionUpdated;
     }
 
     /**
@@ -132,11 +141,15 @@ class Player extends Character {
      */
     _handleInput(move) {
         if (!this._animating) {
+            if (Object.keys(BOUNDARIES).includes(move)) {
+                this._positionUpdated = true;
+            }
             switch (move) {
                 case "left":
                     this._x -= 100;
                     if (this._x < BOUNDARIES["left"]) {
                         this._x = BOUNDARIES["left"];
+                        this._positionUpdated = false;
                     }
                     break;
                 case "up":
@@ -150,12 +163,14 @@ class Player extends Character {
                     this._x += 100;
                     if (this._x > BOUNDARIES["right"]) {
                         this._x = BOUNDARIES["right"];
+                        this._positionUpdated = false;
                     }
                     break;
                 case "down":
                     this._y += 80;
                     if (this._y > BOUNDARIES["down"]) {
                         this._y = BOUNDARIES["down"];
+                        this._positionUpdated = false;
                     }
                     break;
             }

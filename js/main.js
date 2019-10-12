@@ -380,7 +380,28 @@ function addNavigationListeners() {
 	}
 }
 
+/**
+ * Support method to reduce tracks volume,
+ * initialise loopable tracks and initialise listeners for track completion
+ * to update the track state.
+ */
+function settleAudioTracks() {
+	GAME_SOUNDS.gameTheme.audio.loop = true;
+	GAME_SOUNDS.gameTheme.audio.volume = 0.5;
+	GAME_SOUNDS.step.audio.volume = 0.5;
+	GAME_SOUNDS.jingleLoose.audio.volume = 0.2;
+	GAME_SOUNDS.jingleWin.audio.volume = 0.2;
+	GAME_SOUNDS.crawl.audio.loop = true;
+
+	for (let track in GAME_SOUNDS) {
+		GAME_SOUNDS[track].audio.addEventListener("ended", event => {
+			GAME_SOUNDS[track].playing = false;
+		})
+	}
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
+	settleAudioTracks();
 	initialiseHomePage();
 	addNavigationListeners();
 	addHomeListeners();

@@ -115,11 +115,16 @@ class ArcadeGame {
         this._allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        this._player.update();
+
+        if (this._player.positionUpdated()) {
+            this._player.update();
+            this.startAudio("step");
+        }
 
         // check for collisions
         if (this._checkCollisions() && !this._player.animatingCollistion()) {
             this._player.onLadybirdTouch();
+            this.startAudio("collision");
         }
 
         this._checkAudio();
@@ -335,8 +340,12 @@ class ArcadeGame {
      * @private
      */
     _onLevelCompleted() {
+        let trackName = "jingle" + (this._player.alive()?"Win":"Loose");
+        console.info(trackName)
+
         this._stopTime = new Date();
 
         this._onLevelCompletedCallback();
+        this.startAudio(trackName);
     }
 }

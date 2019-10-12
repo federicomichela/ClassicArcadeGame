@@ -25,7 +25,7 @@ const BOUNDARIES = {
 const ENEMIES = {
     0: 3,
     1: 5,
-    2: 10
+    2: 7
 }
 
 const CHARACTERS = {

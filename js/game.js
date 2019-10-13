@@ -1,3 +1,8 @@
+import {MAX_LIFESPAN, GAME_LEVELS, ENEMIES, CHARACTERS, GAME_SOUNDS} from "./const.js";
+import {Enemy, Player} from "./characters.js";
+import {Resources} from "./resources.js";
+import {formatTimeToString} from "./utils.js";
+
 class ArcadeGame {
     constructor(onLevelCompleted) {
         this._onLevelCompletedCallback = onLevelCompleted;
@@ -19,10 +24,10 @@ class ArcadeGame {
         this._selectedCharacter = playerCharacter;
         this._assetsReady = false;
         this._assets = [
-            'images/assets/stone-block.png',
-            'images/assets/water-block.png',
-            'images/assets/grass-block.png',
-            'images/assets/enemy-bug.png',
+            "images/assets/stone-block.png",
+            "images/assets/water-block.png",
+            "images/assets/grass-block.png",
+            "images/assets/enemy-bug.png",
             `images/assets/${CHARACTERS[this._selectedCharacter].assetPath}`
         ];
         this._gameCompleted = false;
@@ -350,3 +355,5 @@ class ArcadeGame {
         this.startAudio(trackName);
     }
 }
+
+export {ArcadeGame};

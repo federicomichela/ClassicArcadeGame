@@ -1,3 +1,6 @@
+import {MAX_LIFESPAN, ALLOWED_KEYS, BOUNDARIES, CHARACTERS} from "./const.js";
+import {getRandomInt} from "./utils.js";
+
 class Character {
     constructor(sprite, positionX, positionY) {
         this.sprite = sprite;
@@ -222,3 +225,5 @@ class Player extends Character {
         this._lifeSpanBar.querySelector(".progress-bar-inner").style.width = `${lifeSpanPerc}%`;
     }
 }
+
+export {Enemy, Player};

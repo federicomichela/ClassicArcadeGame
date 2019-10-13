@@ -61,3 +61,5 @@ const GAME_SOUNDS = {
 	"powerUp": { "audio": new Audio("audio/powerUp.wav"), "playing": false },
 	"step": { "audio": new Audio("audio/step.wav"), "playing": false },
 };
+
+export {MAX_STARS, MAX_LIFESPAN, GAME_LEVELS, ALLOWED_KEYS, BOUNDARIES, ENEMIES, CHARACTERS, GAME_SOUNDS};

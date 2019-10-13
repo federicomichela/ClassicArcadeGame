@@ -25,3 +25,5 @@ function formatTimeToString(ms) {
 
     return formattedTimeParts.join(" ");
 }
+
+export {getRandomNumber, getRandomInt, formatTimeToString};

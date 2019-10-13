@@ -1,11 +1,20 @@
-let gameMatch, clockID, checkGameFocusIntervalID;
+import {MAX_STARS, GAME_LEVELS, ENEMIES, CHARACTERS, GAME_SOUNDS} from "./const.js";
+import {ArcadeGame} from "./game.js";
 
-function initialiseHomePage() {
-	this.loadGameLevels();
-	this.loadGameCharacters();
+let checkGameFocusIntervalID = null,
+	clockID = null,
+	gameMatch = null;
+
+const initialiseHomePage = () => {
+	"use strict";
+
+	loadGameLevels();
+	loadGameCharacters();
 }
 
-function loadGameLevels() {
+const loadGameLevels = () => {
+	"use strict";
+
 	for (let key in GAME_LEVELS) {
 		let value = GAME_LEVELS[key];
 		let frontFace = document.createElement("div");
@@ -26,16 +35,17 @@ function loadGameLevels() {
 
 		if (key === "0") {
 			button.classList.add("selected");
-			this._selectedLevel = key;
 		}
 
 		document.querySelector("#homeSection #levelOptions").appendChild(button);
-	};
-}
+	}
+};
 
-function loadGameCharacters() {
+const loadGameCharacters = () => {
+	"use strict";
+
 	for (let character in CHARACTERS) {
-		let assetPath = CHARACTERS[character].assetPath;
+		let {assetPath} = CHARACTERS[character];
 		let characterObj = document.createElement("div");
 
 		characterObj.style.backgroundImage = `url("images/assets/${assetPath}")`;
@@ -51,7 +61,9 @@ function loadGameCharacters() {
 /**
  * Updated the character selected for the Player
  */
-function updateSelectedCharacter() {
+const updateSelectedCharacter = () => {
+	"use strict";
+
 	let selectedCharacter = document.querySelector("#charactersList .character-entry.selected");
 	let selectedObjImg = document.querySelector("#characterSelected div:nth-child(1)");
 	let selectedObjName = document.querySelector("#characterSelected div:nth-child(2)");
@@ -59,14 +71,14 @@ function updateSelectedCharacter() {
 
 	selectedObjImg.style.backgroundImage = selectedCharacter.style.backgroundImage;
 	selectedObjName.innerText = CHARACTERS[character].name;
-
-	this._selectedCharacter = character;
 }
 
 /**
  * Update player character
  */
-function selectCharacter(event) {
+const selectCharacter = event => {
+	"use strict";
+
 	if (event.target.classList.contains("character-entry")) {
 		document.querySelector("#charactersList .character-entry.selected").classList.remove("selected");
 		event.target.classList.add("selected");
@@ -78,18 +90,22 @@ function selectCharacter(event) {
 /**
  * Pause game theme sound when page loses focus
  */
-function checkGameFocus() {
-	if (!document.hasFocus()) {
-		gameMatch.pauseAudio();
-	} else {
+const checkGameFocus = () => {
+	"use strict";
+
+	if (document.hasFocus()) {
 		gameMatch.startAudio(false);
+	} else {
+		gameMatch.pauseAudio();
 	}
 }
 
 /*
  * Show home page section (hide all the others)
  */
-function showHome() {
+const showHome = () => {
+	"use strict";
+
 	document.getElementById("homeSection").classList.remove("hidden");
 	document.getElementById("gameSection").classList.add("hidden");
 
@@ -105,7 +121,9 @@ function showHome() {
 /*
  * Show game section (hide all the others)
  */
-function showGame() {
+const showGame = () => {
+	"use strict";
+
 	document.getElementById("homeSection").classList.add("hidden");
 	document.getElementById("gameSection").classList.remove("hidden");
 
@@ -120,8 +138,12 @@ function showGame() {
 /*
  * Show game result "dialog"
  */
-function showGameResult(success) {
-	if (!gameMatch.gameCompleted()) { return; }
+const showGameResult = success => {
+	"use strict";
+
+	if (!gameMatch.gameCompleted()) {
+		return;
+	}
 
 	let gameResultSection = document.getElementById("gameResultSection");
 
@@ -159,7 +181,9 @@ function showGameResult(success) {
 /*
  * Hide game result dialog
  */
-function dismissGameResult() {
+const dismissGameResult = () => {
+	"use strict";
+
 	document.getElementById("gameResultSection").classList.add("hidden");
 
 	// re-enable overflow on page
@@ -171,7 +195,9 @@ function dismissGameResult() {
 /*
  * Update the level and start clock in the game page
  */
-function updateGameInfos() {
+const updateGameInfos = () => {
+	"use strict";
+
 	clearInterval(clockID);
 	clockID = setInterval(() => {
 		document.getElementById("gameTimeElapsed").innerText = gameMatch.getElapsedTime();
@@ -183,7 +209,9 @@ function updateGameInfos() {
 /**
  * Make resume buttons available
  */
-function enableResumeButtons() {
+const enableResumeButtons = () => {
+	"use strict";
+
 	for (let btn of document.querySelectorAll(".btn-resume")) {
 		btn.classList.remove("hidden");
 	}
@@ -192,7 +220,9 @@ function enableResumeButtons() {
 /**
  * Make resume buttons unavailable
  */
-function disableResumeButtons() {
+const disableResumeButtons = () => {
+	"use strict";
+
 	for (let btn of document.querySelectorAll(".btn-resume")) {
 		btn.classList.add("hidden");
 	}
@@ -202,15 +232,17 @@ function disableResumeButtons() {
  * Disable resume button when selected level button does not match with current
  * game level. Enable otherwise.
  */
-function checkResumeButton() {
+const checkResumeButton = () => {
+	"use strict";
+
 	let resumeBtn = document.querySelector(".btn-resume");
 	let selectedLevelButton = document.querySelector(".btn-level.selected");
 
 	if (!resumeBtn.classList.contains("hidden")) {
-		if (selectedLevelButton.dataset.level != gameMatch.getLevel()) {
-			resumeBtn.disabled = true;
-		} else {
+		if (selectedLevelButton.dataset.level === gameMatch.getLevel()) {
 			resumeBtn.disabled = false;
+		} else {
+			resumeBtn.disabled = true;
 		}
 	}
 }
@@ -219,7 +251,9 @@ function checkResumeButton() {
  * Start a new game on a specified level
  * @param level {Number}
  */
-function initialiseGame(level) {
+const initialiseGame = level => {
+	"use strict";
+
 	let selectedCharacter = document.querySelector("#charactersList .selected").getAttribute("data-id");
 
 	if (gameMatch) {
@@ -238,7 +272,9 @@ function initialiseGame(level) {
 /*
  * Start a new game from the selected level
  */
-function startGame() {
+const startGame = () => {
+	"use strict";
+
 	let levelSelected = document.querySelector(".btn-level.selected").dataset.level;
 
 	initialiseGame(levelSelected);
@@ -247,7 +283,9 @@ function startGame() {
 /*
  * Start a new game from the current game level
  */
-function resetGame() {
+const resetGame = () => {
+	"use strict";
+
 	let level = gameMatch.getLevel();
 
 	initialiseGame(level);
@@ -256,8 +294,10 @@ function resetGame() {
 /*
  * Reset to a new game with higher level
  */
-function levelUp() {
-	let nextLevel = parseInt(gameMatch.getLevel()) + 1;
+const levelUp = () => {
+	"use strict";
+
+	let nextLevel = parseInt(gameMatch.getLevel(), 10) + 1;
 
 	initialiseGame(nextLevel);
 }
@@ -266,7 +306,9 @@ function levelUp() {
  * Event callback method to select a level
  * @param event {Object}
  */
-function selectLevel(event) {
+const selectLevel = event => {
+	"use strict";
+
 	if (event.target.classList.contains("btn-level")) {
 		// remove selection from currently selected button
 		let currentlySelectedButton = document.querySelector(".btn-level.selected");
@@ -286,7 +328,9 @@ function selectLevel(event) {
  *
  * @param {Object} event
  */
-function loadGame(event) {
+const loadGame = event => {
+	"use strict";
+
 	let callback = startGame;
 	event.target.classList.add("loading");
 
@@ -310,7 +354,9 @@ function loadGame(event) {
  * Listen to a click event on the level buttons to select it.
  * Also listen to the resume button to go back to the game without restarting it.
  */
-function addHomeListeners() {
+const addHomeListeners = () => {
+	"use strict";
+
 	document.getElementById("levelCharacter").addEventListener("click", selectCharacter);
 	document.getElementById("levelOptions").addEventListener("click", selectLevel);
 	document.querySelector(".btn-resume").addEventListener("click", loadGame);
@@ -319,7 +365,9 @@ function addHomeListeners() {
 /*
  * Stop listening to the interactions on the level and resume buttons.
  */
-function removeHomeListeners() {
+const removeHomeListeners = () => {
+	"use strict";
+
 	document.getElementById("levelOptions").removeEventListener("click", selectLevel);
 	document.querySelector(".btn-resume").removeEventListener("click", loadGame);
 }
@@ -327,14 +375,18 @@ function removeHomeListeners() {
 /*
  * Listen to a click event on each card in the grid in order to flip the card
  */
-function addGameListeners() {
+const addGameListeners = () => {
+	"use strict";
+
 	checkGameFocusIntervalID = setInterval(checkGameFocus, 300);
 }
 
 /*
  * Stop listening to the interactions on the cards
  */
-function removeGameListeners() {
+const removeGameListeners = () => {
+	"use strict";
+
 	clearInterval(checkGameFocusIntervalID);
 	gameMatch.pauseAudio();
 }
@@ -342,22 +394,27 @@ function removeGameListeners() {
 /*
  * Listen to a click even on the level up button
  */
-function addGameResultListeners() {
+const addGameResultListeners = () => {
+	"use strict";
+
 	document.querySelector("#gameResultSection .dialog .btn-levelup").addEventListener("click", levelUp);
 }
-
 
 /*
  * Stop listening to the level up button click
  */
-function removeGameResultListeners() {
+const removeGameResultListeners = () => {
+	"use strict";
+
 	document.querySelector("#gameResultSection .dialog .btn-levelup").removeEventListener("click", levelUp);
 }
 
 /*
  * Listen to a click event on all the buttons in the pages
  */
-function addNavigationListeners() {
+const addNavigationListeners = () => {
+	"use strict";
+
 	// when a start or reset button is clicked, initialise a new game with the selected level
 	let startGameButtons = document.querySelectorAll(".btn-start");
 	for (let btn of startGameButtons) {
@@ -381,7 +438,9 @@ function addNavigationListeners() {
  * initialise loopable tracks and initialise listeners for track completion
  * to update the track state.
  */
-function settleAudioTracks() {
+const settleAudioTracks = () => {
+	"use strict";
+
 	GAME_SOUNDS.gameTheme.audio.loop = true;
 	GAME_SOUNDS.gameTheme.audio.volume = 0.5;
 	GAME_SOUNDS.step.audio.volume = 0.5;
@@ -390,19 +449,23 @@ function settleAudioTracks() {
 	GAME_SOUNDS.crawl.audio.loop = true;
 
 	for (let track in GAME_SOUNDS) {
-		GAME_SOUNDS[track].audio.addEventListener("ended", event => {
+		GAME_SOUNDS[track].audio.addEventListener("ended", () => {
 			GAME_SOUNDS[track].playing = false;
-		})
+		});
 	}
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
+	"use strict";
+
 	settleAudioTracks();
 	initialiseHomePage();
 	addNavigationListeners();
 	addHomeListeners();
 });
 
-window.addEventListener('scroll', function(e) {
-  document.querySelector("#gameResultSection").style.top = `${window.scrollY}px`;
+window.addEventListener('scroll', () => {
+	"use strict";
+
+	document.querySelector("#gameResultSection").style.top = `${window.scrollY}px`;
 });

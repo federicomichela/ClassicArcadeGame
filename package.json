@@ -27,9 +27,23 @@
   },
   "homepage": "https://github.com/federicomichela/ClassicArcadeGame#readme",
   "devDependencies": {
-    "gulp": "^3.9.1"
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browserify": "^16.5.0",
+    "eslint": "^6.5.1",
+    "eslint-config-google": "^0.14.0",
+    "esmify": "^2.1.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-connect": "^5.7.0",
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "browser-sync": "^2.26.7",
     "gulp-sass": "^4.0.2"
   }
 }

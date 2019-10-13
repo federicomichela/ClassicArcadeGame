@@ -9,7 +9,9 @@ module.exports = {
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "allowImportExportEverywhere": true
     },
     "rules": {
         "accessor-pairs": "error",
@@ -19,7 +21,7 @@ module.exports = {
             "never"
         ],
         "array-callback-return": "error",
-        "array-element-newline": "error",
+        // "array-element-newline": "error",
         "arrow-body-style": "error",
         "arrow-parens": [
             "error",
@@ -107,7 +109,7 @@ module.exports = {
             "error",
             "always"
         ],
-        "max-classes-per-file": "error",
+        // "max-classes-per-file": "error",
         "max-depth": "error",
         "max-len": "off",
         "max-lines": "off",
@@ -184,12 +186,12 @@ module.exports = {
         "no-octal-escape": "error",
         "no-param-reassign": "off",
         "no-path-concat": "error",
-        "no-plusplus": [
-            "error",
-            {
-                "allowForLoopAfterthoughts": true
-            }
-        ],
+        // "no-plusplus": [
+        //     "error",
+        //     {
+        //         "allowForLoopAfterthoughts": true
+        //     }
+        // ],
         "no-process-env": "error",
         "no-process-exit": "error",
         "no-proto": "error",

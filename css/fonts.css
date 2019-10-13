@@ -1,31 +1,23 @@
 @font-face {
-    font-family: 'karmatic_arcaderegular';
-    src: url('../fonts/ka/ka1-webfont.woff2') format('woff2'),
-         url('../fonts/ka/ka1-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+  font-family: 'karmatic_arcaderegular';
+  src: url("../fonts/ka/ka1-webfont.woff2") format("woff2"), url("../fonts/ka/ka1-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
 
 @font-face {
-    font-family: 'birdy_gameregular';
-    src: url('../fonts/birdy_game/birdy_game-webfont.woff2') format('woff2'),
-         url('../fonts/birdy_game/birdy_game-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+  font-family: 'birdy_gameregular';
+  src: url("../fonts/birdy_game/birdy_game-webfont.woff2") format("woff2"), url("../fonts/birdy_game/birdy_game-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
 
 @font-face {
-    font-family: 'oogieboogieregular';
-    src: url('../fonts/oogie-boogie/oogieboogie-webfont.woff2') format('woff2'),
-         url('../fonts/oogie-boogie/oogieboogie-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+  font-family: 'oogieboogieregular';
+  src: url("../fonts/oogie-boogie/oogieboogie-webfont.woff2") format("woff2"), url("../fonts/oogie-boogie/oogieboogie-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }
 
 @font-face {
-    font-family: 'bangersregular';
-    src: url('../fonts/bangers/bangers-webfont.woff2') format('woff2'),
-         url('../fonts/bangers/bangers-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+  font-family: 'bangersregular';
+  src: url("../fonts/bangers/bangers-webfont.woff2") format("woff2"), url("../fonts/bangers/bangers-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal; }

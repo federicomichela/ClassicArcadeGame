@@ -1,0 +1,35 @@
+{
+  "name": "classicarcadegame",
+  "version": "1.0.0",
+  "description": "Move by using the arrows on your keyboard on by clicking in the game area. Reach the water to complete a game level. Be careful! Ladybirds are dangerous so try to avoid them!",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/federicomichela/ClassicArcadeGame.git"
+  },
+  "keywords": [
+    "js",
+    "html",
+    "css",
+    "oop",
+    "es6",
+    "arcade",
+    "game",
+    "games"
+  ],
+  "author": "Michela Federico",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/federicomichela/ClassicArcadeGame/issues"
+  },
+  "homepage": "https://github.com/federicomichela/ClassicArcadeGame#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  },
+  "dependencies": {
+    "gulp-sass": "^4.0.2"
+  }
+}
